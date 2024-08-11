@@ -10,18 +10,36 @@ namespace HashUtility
     /// </summary>
     public partial class MainWindow : Window
     {
-        protected string[] files;
+        protected List<string> files;
 
         public MainWindow()
         {
             InitializeComponent();
             this.cmbHashType.SelectedItem = HashType.MD5;
-            this.files = ["C:/Users/SaltWood/Desktop/HashUtility.exe"];
+            this.files = [];
         }
 
         public MainWindow(string[] args) : this()
         {
-            this.files = args;
+            foreach (string file in args)
+            {
+                AddToFileList(file);
+            }
+        }
+
+        public void AddToFileList(string file)
+        {
+            if (File.Exists(file))
+            {
+                this.files.Add(file);
+            }
+            else if (Directory.Exists(file))
+            {
+                foreach (string sub in Directory.EnumerateFileSystemEntries(file))
+                {
+                    AddToFileList(sub);
+                }
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
